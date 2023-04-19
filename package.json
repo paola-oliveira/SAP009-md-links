@@ -9,7 +9,9 @@
   },
   "scripts": {
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "cli": "node ./cli.js ./src/texto.md",
+    "cli:valida": "node ./cli.js ./src/texto.md --valida"
   },
   "repository": {
     "type": "git",
