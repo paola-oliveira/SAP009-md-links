@@ -19,24 +19,18 @@ function imprimeLista(valida, resultado, identificador = '') {
           file,
           status
         }) => console.log(
-            chalk.cyan(' ☁ ') + chalk.magenta(file) + ` ${href} ` + chalk.green(status) + ` ${text}`
+            chalk.blue(' ☁ ') + chalk.magenta(file) + ` | ${href} ` + chalk.green('|', status) + chalk.blackBright.bold(' |', text)
+
         ));
       })
-  } else {
-    console.log(
-      chalk.magenta('Lista de links: '),
-      chalk.black.bgBlue(identificador)
-    );
-    resultado.map(({
-      text,
-      href,
-      file
-    }) => console.log(
-      `${file} ${href} ${text}`
-    ))
-
+    } else {
+        console.log(
+          chalk.magenta('Lista de links: '),
+          chalk.black.bgBlue(identificador)
+        );
+        resultado.map(({ text, href, file }) => console.log(chalk.blue(' ☁ ') + chalk.magenta(file) + chalk.green(' |', href) + chalk.blackBright.bold(' |',text)));
+      }
   }
-}
 
 const path = process.argv[2];
 const validate = process.argv.includes('--validate');

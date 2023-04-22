@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 
-function extraçãoiLinks(arrLinks) {
+function extrairHrefs(arrLinks) {
   return arrLinks.map((objetoLink) => objetoLink.href);
 }
 
@@ -29,7 +29,7 @@ function manejaErros(erro) {
 
 
 export default function listaValidada(listaDeLinks) {
-  const links = extraçãoiLinks(listaDeLinks);
+  const links = extrairHrefs(listaDeLinks);
   return checaStatus(links)
     .then((status) => {
       return listaDeLinks.map((objeto, indice) => ({
@@ -42,7 +42,7 @@ export default function listaValidada(listaDeLinks) {
 export function calculaStats(links) {
   const total = links.length;
   const unique = new Set(links.map((link) => link.href)).size;
-  const broken = links.filter((link) => (link.ok === false)).length;
+  const broken = links.filter((link) => (!link.status.includes('OK'))).length;
 
   const stats = {
     total,

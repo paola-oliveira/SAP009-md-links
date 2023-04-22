@@ -10,8 +10,8 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint .",
-    "cli": "node ./cli.js ./src/texto.md",
-    "cli:validate": "node ./cli.js ./src/texto.md --validate"
+    "cli": "node ./cli.js ./arquivos/texto.md",
+    "cli:validate": "node ./cli.js ./arquivos/texto.md --validate"
   },
   "repository": {
     "type": "git",

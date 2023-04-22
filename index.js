@@ -3,8 +3,9 @@ import chalk from 'chalk';
 import {
   imprimeLista
 } from './cli.js'
-import {
-  calculaStats
+import listaValidada, {
+  calculaStats,
+  
 } from './validate-stats.js';
 
 // extrair os links contidos em um texto e retorná-los em um array de objetos.
@@ -67,11 +68,15 @@ function mdLinks(path, options) {
     } else {
       return lerArquivo(path).then(links => {
         if (options.stats && options.validate) {
-          const stats = calculaStats(links);
-          console.log(`Total: ${stats.total}\nUnique: ${stats.unique}\nBroken: ${stats.broken}`);
+          listaValidada(links).then(result => {
+            const stats = calculaStats(result);
+            console.log(chalk.blue(`Total: ${stats.total}`) + '\n' + chalk.blue(`Unique: ${stats.unique}`) + '\n' + chalk.magenta(`Broken: ${stats.broken}`));
+          })
         } else if (options.stats) {
-          const stats = calculaStats(links);
-          console.log(`Total: ${stats.total}\nUnique: ${stats.unique}`);
+          listaValidada(links).then(result => {
+            const stats = calculaStats(result);
+            console.log(chalk.blue(`Total: ${stats.total}`) + '\n' + chalk.blue(`Unique: ${stats.unique}`));
+          })
         } else if (links.length === 0) {
           console.log(chalk.red(`✘ Arquivo não contém links ✘`));
         } else {
