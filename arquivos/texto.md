@@ -23,5 +23,5 @@ Para utilizar a ferramenta, é necessário ter o Node.js instalado no computador
 
 
 ##### PARA TESTES DURANTE O PROCESSO DE CRIAÇÃO DO PROJETO
-[Teste de retorno 400](https://httpstat.us/404) - 404 Not Found
+[Teste de retorno 400](https://google.com.br/uahsduahskd) - 404 Not Found
 [Teste não é possivel acessar o site](http://paoladev.com.br/). 

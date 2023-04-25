@@ -1,10 +1,11 @@
-import fetch from 'node-fetch';
+// import fetch from 'node-fetch';
+
 
 function extrairHrefs(arrLinks) {
   return arrLinks.map((objetoLink) => objetoLink.href);
 }
 
-function checaStatus(listaURLs) {
+export function checaStatus(listaURLs) {
   const arrPromises = listaURLs.map((url) => {
     return fetch(url)
       .then(response => {
@@ -19,12 +20,13 @@ function checaStatus(listaURLs) {
   return Promise.all(arrPromises);
 }
 
-function manejaErros(erro) {
-  if (erro.code === 'ENOTFOUND') {
+export function manejaErros(erro) {
+  if (erro?.cause?.code === 'ENOTFOUND') {
     return 'Ops, link não encontrado!';
   }
   return 'Ocorreu algum erro';
 }
+
 
 
 
@@ -52,7 +54,6 @@ export function calculaStats(links) {
 
   return stats;
 }
-
 
 
 

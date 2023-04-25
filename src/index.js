@@ -1,3 +1,4 @@
+
 import fs from 'fs';
 import chalk from 'chalk';
 import {
@@ -5,7 +6,6 @@ import {
 } from './cli.js'
 import listaValidada, {
   calculaStats,
-  
 } from './validate-stats.js';
 
 // extrair os links contidos em um texto e retorná-los em um array de objetos.
@@ -34,22 +34,27 @@ function lerArquivo(caminhoDoArquivo) {
 }
 
 
+
+
 function mdLinks(path, options) {
 
   // Verifica se o path é indefinido ou nulo, e se for, lança um erro personalizado.
+  if (!path) {
+    throw new Error('Path indefinido ou nulo');
+  }
+  
   try {
-    if (!path) throw new Error('Path indefinido ou nulo');
     const estado = fs.lstatSync(path);
-
+  
     // Verifica se o path é um diretório e não tem a extensão .md, e se for, lê todos os arquivos no diretório e imprime a lista de links para cada arquivo.
-    if (estado.isDirectory() && !path.endsWith('.md')) {
+    if (estado.isDirectory()) {
       fs.promises.readdir(path)
         .then(arquivos => {
           arquivos.forEach(nomeDeArquivo => {
             lerArquivo(`${path}/${nomeDeArquivo}`)
               .then(resultado => {
                 console.log(`${path}/${nomeDeArquivo}`);
-
+  
                 // Verifica se o arquivo não contém links e imprime uma mensagem personalizada, ou se contém links, e imprime a lista de links com validação (opcional).
                 if (resultado.length === 0) {
                   console.log(chalk.red(`✘ Arquivo não contém links ✘`));
@@ -59,11 +64,11 @@ function mdLinks(path, options) {
               })
           })
         })
-
+  
     // Verifica se o path é um arquivo que não tem a extensão .md, e se for, lança um erro personalizado.
     } else if (estado.isFile() && !path.endsWith('.md')) {
-      throw new Error('✘ Extensão inválida ✘');
-    
+      throw new Error('Extensão inválida');
+      
     // Se o path for válido e se referir a um arquivo .md, lê os links no arquivo e imprime a lista de links com validação (opcional) ou as estatísticas de links (opcional).
     } else {
       return lerArquivo(path).then(links => {
@@ -84,20 +89,20 @@ function mdLinks(path, options) {
         }
       });
     }
-
+  
   // Se o path for inválido, lança um erro personalizado.
   } catch (err) {
     if (err.code === 'ENOENT') {
-      throw new Error(chalk.red(`✘ O caminho "${path}" é inválido ✘`));
+      throw new Error(`O caminho "${path}" é inválido`);
     }
-
+  
     // Se ocorrer qualquer outro erro, imprime a mensagem de erro.
-    console.error(chalk.red(`Erro: ${err.message}`));
+    console.error(chalk.red(`Erro: ${err instanceof Error ? err.message : err}`));
   }
 }
 
-
-
 export {
-  mdLinks
+  mdLinks,
+  extraiLinks,
+  lerArquivo,
 };
