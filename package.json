@@ -1,6 +1,6 @@
 {
   "name": "sap009-md-links",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Este projeto consiste em desenvolver uma ferramenta de linha de comando e sua própria biblioteca em Javascript para executar tarefas como manipulação de arquivos e processamento de dados.\"",
   "main": "index.js",
   "type": "module",
