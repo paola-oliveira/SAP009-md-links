@@ -1,7 +1,7 @@
 # MdLinks 🔗💻
 
-<div style="text-align: center;">
-<h4 class="titulo">Ferramentas utilizadas 🔧</h4>
+<div align="center">
+<h3 class="titulo">Ferramentas utilizadas 🔧</h4>
 </div>
 <div align="center">
  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" style="height: 30px;"/>
@@ -10,7 +10,7 @@
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" style="height: 30px;"/> 
 </div>
 
-<div style="text-align: center;">
+<div align="center">
   <a href="https://www.npmjs.com/package/sap009-md-links">Biblioteca publicada 🔎🔗</a>
 </div>
 
