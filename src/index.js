@@ -8,32 +8,29 @@ import listaValidada, {
   calculaStats,
 } from './validate-stats.js';
 
-// extrair os links contidos em um texto e retorná-los em um array de objetos.
-function extraiLinks(texto, caminhoDoArquivo) {
-  const regex = /\[([^[\]]*?)\]\((https?:\/\/[^\s?#.].[^\s]*)\)/gm;
-  const capturas = [...texto.matchAll(regex)];
-  const resultados = capturas.map(captura => ({
-    text: captura[1],
-    href: captura[2],
-    file: caminhoDoArquivo
-  }))
-  return resultados;
-}
-
 //é chamada quando ocorre um erro na leitura do arquivo e lança uma exceção com uma mensagem personalizada.
 function tratarErro(erro) {
   throw new Error(chalk.red(erro.code, 'não há arquivo no diretório'));
 }
 
-//lê um arquivo e retorna uma promise que, quando resolvida, chama a função extraiLinks com o conteúdo do arquivo lido, e, quando rejeitada, chama a função tratarErro com o erro ocorrido.
-function lerArquivo(caminhoDoArquivo) {
+//lê um arquivo e extrai os links.
+function extrairLinksDoArquivo(caminhoDoArquivo) {
   const codificacao = 'utf-8';
   return fs.promises.readFile(caminhoDoArquivo, codificacao)
-    .then((texto) => extraiLinks(texto, caminhoDoArquivo))
-    .catch(tratarErro);
+    .then((texto) => {
+      const regex = /\[([^[\]]*?)\]\((https?:\/\/[^\s?#.].[^\s]*)\)/gm;
+      const capturas = [...texto.matchAll(regex)];
+      const resultados = capturas.map(captura => ({
+        text: captura[1],
+        href: captura[2],
+        file: caminhoDoArquivo
+      }));
+      return resultados;
+    })
+    .catch(erro => {
+      tratarErro(erro);
+    });
 }
-
-
 
 
 function mdLinks(path, options) {
@@ -51,7 +48,7 @@ function mdLinks(path, options) {
       fs.promises.readdir(path)
         .then(arquivos => {
           arquivos.forEach(nomeDeArquivo => {
-            lerArquivo(`${path}/${nomeDeArquivo}`)
+            extrairLinksDoArquivo(`${path}/${nomeDeArquivo}`)
               .then(resultado => {
                 console.log(`${path}/${nomeDeArquivo}`);
   
@@ -71,7 +68,7 @@ function mdLinks(path, options) {
       
     // Se o path for válido e se referir a um arquivo .md, lê os links no arquivo e imprime a lista de links com validação (opcional) ou as estatísticas de links (opcional).
     } else {
-      return lerArquivo(path).then(links => {
+      return extrairLinksDoArquivo(path).then(links => {
         if (options.stats && options.validate) {
           listaValidada(links).then(result => {
             const stats = calculaStats(result);
@@ -103,6 +100,6 @@ function mdLinks(path, options) {
 
 export {
   mdLinks,
-  extraiLinks,
-  lerArquivo,
+  extrairLinksDoArquivo,
+  tratarErro,
 };

@@ -1,77 +1,56 @@
+import chalk from 'chalk';
 import {
   mdLinks,
-  extraiLinks,
-  lerArquivo
+  extrairLinksDoArquivo,
+  tratarErro,
 } from '../src/index.js';
 import {
   imprimeLista
 } from '../src/cli.js';
-import chalk from 'chalk';
 import listaValidada, {
   checaStatus,
   manejaErros,
   calculaStats
 } from '../src/validate-stats.js';
-import assert from 'assert';
 
-describe('extraiLinks', () => {
-  it('extraiLinks deve ser uma função', () => {
-    expect(typeof extraiLinks).toBe('function');
+
+describe('extrairLinksDoArquivo', () => {
+  it('extrairLinksDoArquivo deve ser uma função', () => {
+  expect(typeof extrairLinksDoArquivo).toBe('function');
   });
-
-  it('deve extrair corretamente os links de um texto', () => {
-    const texto = 'Este é um exemplo de [link](https://exemplo.com) em um texto. E aqui está outro [link](https://outroexemplo.com) para testar a função.';
-    const caminhoDoArquivo = 'caminho/do/arquivo.md';
-    const resultadoEsperado = [{
-        text: 'link',
-        href: 'https://exemplo.com',
-        file: 'caminho/do/arquivo.md'
-      },
-      {
-        text: 'link',
-        href: 'https://outroexemplo.com',
-        file: 'caminho/do/arquivo.md'
-      }
-    ];
-    const resultado = extraiLinks(texto, caminhoDoArquivo);
-    expect(resultado).toEqual(resultadoEsperado);
-  });
-
-  it('deve retornar um array vazio se não houver links no texto', () => {
-    const texto = 'Este é um exemplo de texto sem links.';
-    const caminhoDoArquivo = 'caminho/do/arquivo.md';
-    const resultadoEsperado = [];
-    const resultado = extraiLinks(texto, caminhoDoArquivo);
-    expect(resultado).toEqual(resultadoEsperado);
-  });
-});
-
-describe('lerArquivo', () => {
-  it('lerArquivo deve ser uma função', () => {
-    expect(typeof lerArquivo).toBe('function');
-  });
-
+  
   it('deve extrair corretamente os links de um arquivo', async () => {
-    const caminhoDoArquivo = 'test/arquivo1.md';
-    const resultadoEsperado = [{
-      text: 'link',
-      href: 'https://exemplo.com',
-      file: caminhoDoArquivo
-    }, {
-      text: 'link',
-      href: 'https://outroexemplo.com',
-      file: caminhoDoArquivo
-    }];
-    const resultado = await lerArquivo(caminhoDoArquivo);
-    expect(resultado).toEqual(resultadoEsperado);
+  const caminhoDoArquivo = 'test/arquivo1.md';
+  const resultadoEsperado = [{
+  text: 'link',
+  href: 'https://exemplo.com',
+  file: caminhoDoArquivo
+  }, {
+  text: 'link',
+  href: 'https://outroexemplo.com',
+  file: caminhoDoArquivo
+  }];
+  const resultado = await extrairLinksDoArquivo(caminhoDoArquivo);
+  expect(resultado).toEqual(resultadoEsperado);
+  });
+  
+  it('deve retornar um array vazio se não houver links no arquivo', async () => {
+  const caminhoDoArquivo = 'test/arquivo2.md';
+  const resultadoEsperado = [];
+  const resultado = await extrairLinksDoArquivo(caminhoDoArquivo);
+  expect(resultado).toEqual(resultadoEsperado);
+  });
   });
 
-  it('deve retornar um array vazio se não houver links no arquivo', async () => {
-    const caminhoDoArquivo = 'test/arquivo2.md';
-    const resultadoEsperado = [];
-    const resultado = await lerArquivo(caminhoDoArquivo);
-    expect(resultado).toEqual(resultadoEsperado);
-  });
+  describe('tratarErro', () => {
+    it('tratarErro deve ser uma função', () => {
+    expect(typeof tratarErro).toBe('function');
+    });
+
+  it('deve lançar um erro com mensagem personalizada', () => {
+    const erro = { code: 'ENOENT' };
+    expect(() => tratarErro(erro)).toThrow('ENOENT não há arquivo no diretório');
+  })
 });
 
 describe('mdLinks', () => {
@@ -125,7 +104,8 @@ describe('imprimeLista', () => {
     expect(typeof imprimeLista).toBe('function');
   });
 
-  test('deve imprimir lista de links válidos', async () => {
+
+  it('deve imprimir lista de links válidos', async () => {
     const valida = true;
     const resultado = [{
       text: 'Link 1',
@@ -194,20 +174,20 @@ describe('checaStatus', () => {
     expect(typeof checaStatus).toBe('function');
   });
 
-  const urls = [
-    'https://jsonplaceholder.typicode.com/posts/1',
-    'https://jsonplaceholder.typicode.com/invalid',
-  ];
+  const urls = [    'https://jsonplaceholder.typicode.com/posts/1',    'https://jsonplaceholder.typicode.com/invalid',  ];
 
   it('deve retornar uma matriz de strings contendo "OK" para status de resposta 200 e "FAIL" para outros status', async () => {
     const resultados = await checaStatus(urls);
-    assert.deepStrictEqual(resultados, ['OK 200', 'FAIL 404']);
+    expect(resultados).toEqual([
+      '\u001b[32mOK | 200\u001b[39m',
+      '\u001b[31mFAIL | 404\u001b[39m'
+    ]);
   });
+});
 
   describe('manejaErros', () => {
-    it('manejaErros deve ser uma função', () => {
-      expect(typeof manejaErros).toBe('function');
-    });
+  it('manejaErros deve ser uma função', () => {
+    expect(typeof manejaErros).toBe('function');
   });
 
   it('deve retornar "Ops, link não encontrado!" para um erro de conexão ENOTFOUND', () => {
@@ -217,20 +197,22 @@ describe('checaStatus', () => {
       }
     };
     const resultado = manejaErros(erro);
-    assert.strictEqual(resultado, 'Ops, link não encontrado!');
+    expect(resultado).toBe(chalk.red('Ops, link não encontrado!'));
   });
 
   it('deve retornar "Ocorreu algum erro" para outros tipos de erro', () => {
     const erro = new Error('Algum erro ocorreu');
     const resultado = manejaErros(erro);
-    assert.strictEqual(resultado, 'Ocorreu algum erro');
+    expect(resultado).toBe('Ocorreu algum erro');
   });
+});
+
 
   describe('listaValidada', () => {
     it('listaValidada deve ser uma função', () => {
       expect(typeof listaValidada).toBe('function');
     });
-  });
+
 
   it('deve adicionar o status de cada link ao objeto correspondente na lista de links', async () => {
     const listaDeLinks = [{
@@ -243,15 +225,16 @@ describe('checaStatus', () => {
 
     const resultadoEsperado = [{
         href: 'https://www.google.com',
-        status: 'OK 200'
+        status: '\x1B[32mOK | 200\x1B[39m'
       },
       {
         href: 'https://www.github.com',
-        status: 'OK 200'
+        status: '\x1B[32mOK | 200\x1B[39m'
       },
     ];
 
     const resultado = await listaValidada(listaDeLinks);
+    console.log(resultado);
     expect(resultado).toEqual(resultadoEsperado);
   });
 });

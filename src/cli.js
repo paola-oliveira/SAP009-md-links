@@ -21,7 +21,7 @@ function imprimeLista(valida, resultado, identificador = '') {
           file,
           status
         }) => console.log(
-            chalk.blue(' ☁ ') + chalk.magenta(file) + ` | ${href} ` + chalk.green('|', status) + chalk.blackBright.bold(' |', text)
+            chalk.blue(' ☁  ') + chalk.magenta(file) + ` | ${href} ` + ('|', status) + chalk.blackBright.bold(' |', text)
 
         ));
       })
@@ -30,11 +30,12 @@ function imprimeLista(valida, resultado, identificador = '') {
           chalk.magenta('Lista de links: '),
           chalk.black.bgBlue(identificador)
         );
-        resultado.map(({ text, href, file }) => console.log(chalk.blue(' ☁ ') + chalk.magenta(file) + chalk.green(' |', href) + chalk.blackBright.bold(' |',text)));
+        resultado.map(({ text, href, file }) => console.log(chalk.blue(' ☁  ') + chalk.magenta(file) + chalk.green(' |', href) + chalk.blackBright.bold(' |',text)));
       }
   }
   
 const path = process.argv[2];
+console.log('caminho', process.argv[1])
 const validate = process.argv.includes('--validate');
 const stats = process.argv.includes('--stats');
 
