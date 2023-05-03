@@ -1,5 +1,3 @@
-// import fetch from 'node-fetch';
-
 import chalk from "chalk";
 
 //retorna um novo array contendo apenas os valores da propriedade href
